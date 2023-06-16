@@ -1,79 +1,39 @@
-// import './index.css';
-const initialItems = [
-  {
-    id : 1,description : "Passports" , quantity : 2, packed :false
-  },
-  {
-    id : 2 , description : "Socks", quantity : 12 , packed : true
-  },
-  {
-    id : 3,description : "Passports" , quantity : 2, packed :false
-  },
-  {
-    id : 4 , description : "Socks", quantity : 12 , packed : true
-  },
-  {
-    id : 5,description : "Passports" , quantity : 2, packed :false
-  },
-  {
-    id : 6 , description : "Socks", quantity : 12 , packed : true
-  },
-]
-
+import React,{ useState } from "react";
+import PackingList from "./PackingList";
+import Form from "./Form";
+import Logo from "./Logo";
+import Stats from "./Stats";
 
 function App() {
+  const [items, setItems] = useState([]);
+  
+  //  handle add  new item 
+  function handleAddItem(newItem){
+     setItems((items)=> [...items,newItem]);
+  }
+  
+  //  handle delete item 
+  function handleDeleteItem (id){
+    setItems((items) => items.filter((item) => item.id !== id ));
+  }
+
+  // handle toggle cheke box 
+  function handleToggleItem(id){
+    setItems((items) =>  items.map((item) => item.id === id ? {...item,packed : !item.packed} : item ));
+  }
+
+  // handle clear items 
+  function handlecleatItems (){
+    setItems([]);
+  }
   return (
     <div className="app">
       <Logo />
-      <Form/>
-      <PackingList/>
-      <Stats/>
+      <Form onAddItems={handleAddItem} onDeleteItem ={handleDeleteItem}/>
+      <PackingList items={items} onDeleteItem={handleDeleteItem} onToggleItem={handleToggleItem} onDeleteAll={handlecleatItems}/>
+      <Stats items={items}/>
     </div>
   );
 }
 
-
-function Logo (){
-  return(
-    <h1> 🐱‍🏍Far Away 🛺</h1>
-  )
-}
-
-function Form (){
-  return (
-    <div className="add-form">
-      <h3>What do you need for your Trip?</h3>
-     <select>{Array.from( {length: 20}, (_,i) => i+1).map(num => <option value={num} key={num}>{num}</option>)}</select>
-    
-    </div>
-  )
-}
-
-function PackingList (){
-  return(
-    <div className="list">
-      <ul>
-        {initialItems.map(item =>  <Item item={item}/>)}
-      </ul>
-    </div>
-  )
-}
-function Item ({item}) {
-  return(
-    <li>
-      <span style={item.packed ? {textDecoration : "line-through"} : {}}>
-        {item.quantity} {item.description}
-      </span>
-      <button>🎯</button>
-    </li>
-  )
-}
-
-function Stats(){
-  return (
-    <footer className="stats">
-     <em> 👜you have X items on your list and you already packed x (x%) </em>
-    </footer>
-  )
-}
 export default App;
